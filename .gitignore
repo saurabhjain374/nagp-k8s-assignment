@@ -1,0 +1,94 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build Results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+build/
+Build/
+bin/
+obj/
+
+# .NET
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# Temporary Files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# NuGet
+*.nupkg
+packages/
+
+# Docker
+docker-compose.override.yml
+
+# Kubernetes Secrets (DO NOT COMMIT)
+secret.yaml
+*.secret.yaml
+
+# OS Files
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+# Windows
+ehthumbs.db
+
+# Test Results
+TestResults/
+*.trx
+
+# Publish Output
+publish/
+
+# Coverage Reports
+coverage/
+coverage.xml
+
+# Local Development Settings
+appsettings.Local.json
+
+# Visual Studio Cache
+.vsconfig
+
+# Azure
+.azure/
+
+# Node (if ever added)
+node_modules/
+
+# Generated OpenAPI Files
+openapi.json
+
+# Backup Files
+*.orig
+*.rej
+
+# PostgreSQL Dumps
+*.sql.bak
+*.dump
