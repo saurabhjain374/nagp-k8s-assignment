@@ -1,4 +1,5 @@
-﻿using EmployeeApi.Repositories;
+﻿using EmployeeApi.Models;
+using EmployeeApi.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeApi.Controllers;
