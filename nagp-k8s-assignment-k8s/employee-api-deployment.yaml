@@ -22,7 +22,7 @@ spec:
       containers:
       - name: employee-api
 
-        image: asia-south1-docker.pkg.dev/nagp-k8s-assignment-499505/nagp-repo/employee-api:v1
+        image: asia-south1-docker.pkg.dev/nagp-k8s-assignment-499505/nagp-repo/employee-api:v2
 
         ports:
         - containerPort: 8080
