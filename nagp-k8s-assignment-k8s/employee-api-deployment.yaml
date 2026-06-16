@@ -28,7 +28,7 @@ spec:
         - containerPort: 8080
 
         env:
-        - name: DB_CONNECTION
+        - name: ConnectionStrings__Default
           value: "Host=postgres-service;Port=5432;Database=employee_db;Username=postgres;Password=postgres123"
 
         resources:
