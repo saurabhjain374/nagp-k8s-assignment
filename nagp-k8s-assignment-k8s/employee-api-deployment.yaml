@@ -4,7 +4,7 @@ metadata:
   name: employee-api
   namespace: nagp-assignment
 spec:
-  replicas: 2
+  replicas: 1
 
   strategy:
     type: RollingUpdate
@@ -33,7 +33,7 @@ spec:
 
         resources:
           requests:
-            cpu: "250m"
+            cpu: "50m"
             memory: "256Mi"
 
           limits:
