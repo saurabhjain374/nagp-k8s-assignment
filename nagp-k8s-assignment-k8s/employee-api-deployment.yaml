@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: employee-api
+  namespace: nagp-assignment
+spec:
+  replicas: 2
+
+  strategy:
+    type: RollingUpdate
+
+  selector:
+    matchLabels:
+      app: employee-api
+
+  template:
+    metadata:
+      labels:
+        app: employee-api
+
+    spec:
+      containers:
+      - name: employee-api
+
+        image: asia-south1-docker.pkg.dev/nagp-k8s-assignment-499505/nagp-repo/employee-api:v1
+
+        ports:
+        - containerPort: 8080
+
+        env:
+        - name: DB_CONNECTION
+          value: "Host=postgres-service;Port=5432;Database=employee_db;Username=postgres;Password=postgres123"
+
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "256Mi"
+
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
