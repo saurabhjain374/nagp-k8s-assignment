@@ -4,7 +4,7 @@ metadata:
   name: employee-api
   namespace: nagp-assignment
 spec:
-  replicas: 1
+  replicas: 4
 
   strategy:
     type: RollingUpdate
@@ -22,7 +22,7 @@ spec:
       containers:
       - name: employee-api
 
-        image: asia-south1-docker.pkg.dev/nagp-k8s-assignment-499505/nagp-repo/employee-api:v2
+        image: asia-south1-docker.pkg.dev/nagp-k8s-assignment-499505/nagp-repo/employee-api:v3
 
         ports:
         - containerPort: 8080
