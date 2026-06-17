@@ -4,8 +4,6 @@ metadata:
   name: employee-api
   namespace: nagp-assignment
 spec:
-  replicas: 4
-
   strategy:
     type: RollingUpdate
 
