@@ -21,15 +21,18 @@ spec:
     spec:
       containers:
       - name: employee-api
-
-        image: asia-south1-docker.pkg.dev/nagp-k8s-assignment-499505/nagp-repo/employee-api:v3
+        image: saurabhjain374/employee-api:v2
+        imagePullPolicy: Always
 
         ports:
         - containerPort: 8080
 
         env:
         - name: ConnectionStrings__Default
-          value: "Host=postgres-service;Port=5432;Database=employee_db;Username=postgres;Password=postgres123"
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: CONNECTION_STRING
 
         resources:
           requests:
