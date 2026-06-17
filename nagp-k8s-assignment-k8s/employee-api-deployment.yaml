@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: employee-api
-        image: saurabhjain374/employee-api:v2
+        image: saurabhjain374/employee-api:v3
         imagePullPolicy: Always
 
         ports:
@@ -66,13 +66,13 @@ spec:
               key: POSTGRES_DB
 
         # From Secret (sensitive)
-        - name: POSTGRES_USER
+        - name: DB_USER
           valueFrom:
             secretKeyRef:
               name: postgres-secret
               key: POSTGRES_USER
 
-        - name: POSTGRES_PASSWORD
+        - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
               name: postgres-secret

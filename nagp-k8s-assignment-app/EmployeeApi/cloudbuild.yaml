@@ -8,8 +8,8 @@ steps:
     - '-c'
     - |
       echo "$$DOCKER_PASSWORD" | docker login -u "$$DOCKER_USERNAME" --password-stdin
-      docker build -t $$DOCKER_USERNAME/employee-api:v2 .
-      docker push $$DOCKER_USERNAME/employee-api:v2
+      docker build -t $$DOCKER_USERNAME/employee-api:v3 .
+      docker push $$DOCKER_USERNAME/employee-api:v3
 
 availableSecrets:
   secretManager:
