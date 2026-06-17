@@ -51,4 +51,15 @@ public class EmployeesController : ControllerBase
                 message = "Employee created successfully"
             });
     }
+
+    [HttpGet("info")]
+    public IActionResult GetAppInfo()
+    {
+        return Ok(new
+        {
+            Environment = Environment.GetEnvironmentVariable("APP_ENVIRONMENT") ?? "unknown",
+            Version = Environment.GetEnvironmentVariable("APP_VERSION") ?? "unknown",
+            Hostname = Environment.MachineName
+        });
+    }
 }

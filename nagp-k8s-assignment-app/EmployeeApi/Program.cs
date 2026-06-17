@@ -24,12 +24,13 @@ namespace EmployeeApi
             builder.Services.AddScoped<EmployeeRepository>();
 
             var app = builder.Build();
-
+            // Add health check endpoint
+            app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
             // Configure the HTTP request pipeline.
-           
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
 
             app.UseHttpsRedirection();
 

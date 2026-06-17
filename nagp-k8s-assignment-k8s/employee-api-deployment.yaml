@@ -27,12 +27,69 @@ spec:
         ports:
         - containerPort: 8080
 
+        # Add these probes
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 15
+          failureThreshold: 3
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          failureThreshold: 3
+
         env:
-        - name: ConnectionStrings__Default
+        
+        # From ConfigMap (non-sensitive)
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: DB_HOST
+
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: DB_PORT
+
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: POSTGRES_DB
+
+        # From Secret (sensitive)
+        - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:
               name: postgres-secret
-              key: CONNECTION_STRING
+              key: POSTGRES_USER
+
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_PASSWORD
+
+        # From API ConfigMap
+        - name: APP_ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: api-config
+              key: APP_ENVIRONMENT
+
+        - name: APP_VERSION
+          valueFrom:  
+            configMapKeyRef:
+              name: api-config
+              key: APP_VERSION
 
         resources:
           requests:

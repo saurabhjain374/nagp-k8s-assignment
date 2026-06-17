@@ -4,6 +4,7 @@ metadata:
   name: employee-api-ingress
   namespace: nagp-assignment
 spec:
+  ingressClassName: nginx    # Add this line
   defaultBackend:
     service:
       name: employee-api-service
