@@ -60,8 +60,12 @@ public class EmployeeRepository
         using var connection = new NpgsqlConnection(GetConnectionString());
 
         string sql = @"
-        INSERT INTO employees (...)
-        VALUES (...)
+        INSERT INTO employees (employee_code, first_name, last_name, email, phone_number, 
+                               department, designation, manager_name, location, 
+                               joining_date, employment_type, salary, is_active)
+        VALUES (@Employee_Code, @First_Name, @Last_Name, @Email, @Phone_Number,
+                @Department, @Designation, @Manager_Name, @Location,
+                @Joining_Date, @Employment_Type, @Salary, @Is_Active)
         RETURNING employee_id;";
 
         return await connection.ExecuteScalarAsync<int>(sql, employee);
