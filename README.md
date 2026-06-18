@@ -1,68 +1,68 @@
 # NAGP 2026 - Kubernetes Assignment
 
-## Employee API - Multi-Tier Kubernetes Deployment
+## Employee API on Kubernetes
 
-A containerized .NET 9 Web API deployed on Kubernetes (GKE) with PostgreSQL database, demonstrating cloud-native best practices including auto-scaling, self-healing, rolling updates, and FinOps resource optimization.
-
----
-
-## Quick Links
-
-| Resource | URL |
-|----------|-----|
-| **Code Repository** | https://github.com/saurabhjain374/nagp-k8s-assignment |
-| **Docker Hub Image** | https://hub.docker.com/r/saurabhjain374/employee-api |
-| **API Endpoint (Ingress)** | http://8.231.113.109/api/employees |
-| **API Endpoint (LoadBalancer)** | http://34.180.14.51/api/employees |
-| **Swagger UI** | http://34.180.14.51/swagger |
+This is my kubernetes assignment where I made a .NET 9 API with PostgreSQL database. Deployed it on GKE with autoscaling, health checks, rolling updates and all that stuff.
 
 ---
 
-## Project Structure
+## Links
+
+| What | Link |
+|------|------|
+| Github Repo | https://github.com/saurabhjain374/nagp-k8s-assignment |
+| Docker Image | https://hub.docker.com/r/saurabhjain374/employee-api |
+| API via Ingress | http://8.231.113.109/api/employees |
+| API via LoadBalancer | http://34.180.14.51/api/employees |
+| Swagger | http://34.180.14.51/swagger |
+
+---
+
+## Folder Structure
 
 ```
 nagp-k8s-assignment/
-├── nagp-k8s-assignment-app/          # Application source code
+├── nagp-k8s-assignment-app/          # the actual code
 │   └── EmployeeApi/
-│       ├── Controllers/              # API Controllers
-│       ├── Models/                   # Data models
-│       ├── Repositories/             # Database access layer
-│       ├── Dockerfile                # Multi-stage Docker build
-│       └── Program.cs                # Application entry point
+│       ├── Controllers/              # api controllers
+│       ├── Models/                   # employee model etc
+│       ├── Repositories/             # database stuff
+│       ├── Dockerfile                # for building image
+│       └── Program.cs                # main file
 │
-├── nagp-k8s-assignment-k8s/          # Kubernetes manifests
-│   ├── namespace.yaml                # Namespace definition
-│   ├── employee-api-deployment.yaml  # API Deployment with HPA
-│   ├── employee-api-service.yaml     # LoadBalancer Service
-│   ├── api-configmap.yaml            # API configuration
-│   ├── postgres-deployment.yaml      # Database Deployment
-│   ├── postgres-service.yaml         # ClusterIP Service
-│   ├── postgres-configmap.yaml       # Database configuration
-│   ├── postgres-secret.yaml          # Database credentials
-│   ├── postgres-pvc.yaml             # Persistent Volume Claim
-│   ├── hpa.yaml                      # Horizontal Pod Autoscaler
-│   └── ingress.yaml                  # NGINX Ingress
+├── nagp-k8s-assignment-k8s/          # kubernetes yaml files
+│   ├── namespace.yaml
+│   ├── employee-api-deployment.yaml  # api deployment
+│   ├── employee-api-service.yaml     # loadbalancer service
+│   ├── api-configmap.yaml
+│   ├── postgres-deployment.yaml      # db deployment
+│   ├── postgres-service.yaml         # clusterip service
+│   ├── postgres-configmap.yaml
+│   ├── postgres-secret.yaml          # db password
+│   ├── postgres-pvc.yaml             # storage
+│   ├── hpa.yaml                      # autoscaling
+│   └── ingress.yaml
 │
-└── docs/                             # Documentation
-    └── DOCUMENTATION.md              # Comprehensive documentation
+└── docs/
+    └── DOCUMENTATION.md              # detailed docs
 ```
 
 ---
 
 ## API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/employees` | Get all employees |
-| GET | `/api/employees/{id}` | Get employee by ID |
-| POST | `/api/employees` | Create new employee |
-| GET | `/api/employees/info` | Get application info (environment, version, hostname) |
-| GET | `/health` | Health check endpoint |
-| GET | `/swagger` | Swagger UI |
+| Method | URL | What it does |
+|--------|-----|--------------|
+| GET | `/api/employees` | gets all employees |
+| GET | `/api/employees/{id}` | gets one employee |
+| POST | `/api/employees` | creates new employee |
+| GET | `/api/employees/info` | shows app info like hostname |
+| GET | `/health` | health check |
+| GET | `/swagger` | swagger ui |
 
 ---
 
-## Architecture Overview
+## How it works
 
 ```
                     ┌─────────────────────────────────────────────────────┐
@@ -99,96 +99,93 @@ nagp-k8s-assignment/
                     └─────────────────────────────────────────────────────┘
 ```
 
+Basically users hit the ingress or loadbalancer, that goes to API pods (which can scale from 2 to 10), API talks to postgres through clusterip, and postgres saves to PVC.
+
 ---
 
-## Deployment Instructions
+## How to deploy
 
-### Prerequisites
-- Kubernetes cluster (GKE, AKS, EKS, or local)
-- kubectl configured
-- NGINX Ingress Controller installed
+### You need
+- A kubernetes cluster (I used GKE but any should work)
+- kubectl setup
+- NGINX ingress controller
 
-### Deploy to Kubernetes
+### Commands
 
 ```bash
-# 1. Create namespace
+# create namespace first
 kubectl apply -f nagp-k8s-assignment-k8s/namespace.yaml
 
-# 2. Deploy database tier
+# setup database
 kubectl apply -f nagp-k8s-assignment-k8s/postgres-secret.yaml
 kubectl apply -f nagp-k8s-assignment-k8s/postgres-configmap.yaml
 kubectl apply -f nagp-k8s-assignment-k8s/postgres-pvc.yaml
 kubectl apply -f nagp-k8s-assignment-k8s/postgres-deployment.yaml
 kubectl apply -f nagp-k8s-assignment-k8s/postgres-service.yaml
 
-# 3. Deploy API tier
+# setup api
 kubectl apply -f nagp-k8s-assignment-k8s/api-configmap.yaml
 kubectl apply -f nagp-k8s-assignment-k8s/employee-api-deployment.yaml
 kubectl apply -f nagp-k8s-assignment-k8s/employee-api-service.yaml
 kubectl apply -f nagp-k8s-assignment-k8s/hpa.yaml
 kubectl apply -f nagp-k8s-assignment-k8s/ingress.yaml
 
-# 4. Verify deployment
+# check if everything is running
 kubectl get all -n nagp-assignment
 ```
 
 ---
 
-## Kubernetes Features Demonstrated
+## K8s features I used
 
-| Feature | Implementation |
-|---------|----------------|
-| **Rolling Updates** | `strategy: type: RollingUpdate` in API deployment |
-| **Self-Healing** | Liveness & Readiness probes on `/health` endpoint |
-| **Auto-Scaling (HPA)** | CPU-based scaling (70% threshold, 2-10 replicas) |
-| **Data Persistence** | PersistentVolumeClaim for PostgreSQL (5Gi) |
-| **Configuration Management** | ConfigMaps for non-sensitive config |
-| **Secrets Management** | Kubernetes Secrets for DB credentials (base64 encoded) |
-| **Service Discovery** | ClusterIP service for internal DB access |
-| **External Access** | LoadBalancer + NGINX Ingress |
-| **Resource Management** | CPU/Memory requests and limits defined |
+| Feature | How I did it |
+|---------|--------------|
+| Rolling Updates | set strategy type to RollingUpdate in deployment |
+| Self Healing | added liveness and readiness probes hitting /health |
+| Autoscaling | HPA with 70% cpu target, min 2 max 10 pods |
+| Persistent Data | PVC for postgres, 5Gi storage |
+| Config | ConfigMaps for settings |
+| Secrets | K8s secrets for db password (base64) |
+| Internal access | ClusterIP for postgres so only api can reach it |
+| External access | LoadBalancer + ingress |
+| Resource limits | set cpu and memory requests/limits |
 
 ---
 
-## FinOps Considerations
-
-Resource optimization implemented:
+## Resource values
 
 | Resource | Request | Limit |
 |----------|---------|-------|
 | CPU | 50m | 500m |
 | Memory | 256Mi | 512Mi |
 
-See [DOCUMENTATION.md](docs/DOCUMENTATION.md) for detailed FinOps analysis and cost optimization opportunities.
+Check [DOCUMENTATION.md](docs/DOCUMENTATION.md) for more details on why I chose these values and cost saving ideas.
 
 ---
 
-## Screen Recording Demonstrations
+## Video Recording
 
-The video recording demonstrates:
-1. ✅ All Kubernetes objects deployed and running
-2. ✅ API call retrieving employee records from database
-3. ✅ Self-healing: API pod deletion and automatic regeneration
-4. ✅ Database persistence: Pod deletion with data retention
-5. ✅ HPA in action with resource metrics
-6. ✅ Rolling update deployment strategy
-
----
-
-## Technology Stack
-
-- **Application:** .NET 9 Web API
-- **Database:** PostgreSQL 17
-- **Container Runtime:** Docker
-- **Orchestration:** Kubernetes (GKE)
-- **Ingress Controller:** NGINX
-- **ORM:** Dapper (micro-ORM)
+In the video I showed:
+1. All pods running properly
+2. API working and fetching data from db
+3. Deleted api pod and it came back on its own (self healing)
+4. Deleted postgres pod and data was still there (persistence)
+5. HPA showing metrics
+6. Rolling update happening
 
 ---
 
-## Author
+## Tech used
 
-**Saurabh Jain**  
-NAGP 2026 - Technology Band III  
-Kubernetes, DevOps & FinOps Workshop
+- .NET 9 for API
+- PostgreSQL 17 for database
+- Docker for containers
+- Kubernetes on GKE
+- NGINX for ingress
+- Dapper for database queries
+
+---
+
+Saurabh Jain  
+NAGP 2026
 

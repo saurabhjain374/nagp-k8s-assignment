@@ -1,99 +1,83 @@
-# NAGP 2026 Kubernetes Assignment - Documentation
+# NAGP 2026 Kubernetes Assignment
 
-## 1. Requirement Understanding
+## What this assignment is about
 
-Design and deploy a multi-tier Kubernetes application with:
-- **Service API Tier**: Externally accessible, auto-scaling, self-healing API (4 pods, rolling updates, HPA)
-- **Database Tier**: Internal-only PostgreSQL with persistent storage (1 pod)
-- **Configuration**: ConfigMaps for settings, Secrets for credentials
-- **FinOps**: Resource limits and cost optimization
+Basically we need to make a kubernetes app that has two parts:
+- An API that people can access from outside. It should scale up/down on its own and restart if something goes wrong. Need 4 pods, rolling updates and HPA stuff
+- A database (PostgreSQL) that only the API can talk to. This one needs storage that stays even if pod dies
+- Also need to use ConfigMaps and Secrets for config and passwords
+- Should think about costs too (FinOps part)
 
----
+## Things I assumed
 
-## 2. Assumptions
+- Using GKE (Google cloud kubernetes) with NGINX for ingress
+- Storage class standard-rwo is there by default
+- Not expecting heavy traffic, just normal usage
+- Metrics server is running so HPA can work
 
-- **Platform**: Google Kubernetes Engine (GKE) with NGINX Ingress Controller
-- **Storage**: Default `standard-rwo` storage class available
-- **Traffic**: Low-moderate traffic; HPA handles bursts
-- **Monitoring**: Kubernetes metrics server enabled for HPA
+## My Solution
 
----
+### What I used
 
-## 3. Solution Overview
+- API is made with .NET 9
+- Database is PostgreSQL 17
+- Using Dapper for database queries (its simpler than EF)
+- Everything runs on Kubernetes in GKE
+- NGINX handles incoming traffic
 
-### Technology Stack
-| Component | Technology |
-|-----------|------------|
-| API | .NET 9 Web API |
-| Database | PostgreSQL 17 |
-| ORM | Dapper |
-| Orchestration | Kubernetes (GKE) |
-| Ingress | NGINX |
+### How it works
 
-### Architecture
-```
-Internet → Ingress/LoadBalancer → API Pods (HPA: 2-10) → ClusterIP → PostgreSQL Pod → PVC (5Gi)
-```
+Basically traffic comes from internet, goes to ingress, then to API pods (these scale between 2 to 10 based on load), then API talks to postgres through ClusterIP service, and postgres saves data to persistent volume.
 
-### Kubernetes Resources
-| Resource | Name | Purpose |
-|----------|------|---------|
-| Deployment | employee-api | API with rolling updates, probes |
-| Deployment | postgres | Database with PVC |
-| Service | employee-api-service | LoadBalancer (external) |
-| Service | postgres-service | ClusterIP (internal) |
-| ConfigMap | api-config, postgres-config | Configuration |
-| Secret | postgres-secret | DB credentials |
-| PVC | postgres-pvc | 5Gi persistent storage |
-| HPA | employee-api-hpa | CPU-based scaling (70%) |
-| Ingress | employee-api-ingress | External routing |
+### K8s files I created
 
-### Key Features
-- **Rolling Updates**: Zero-downtime deployments
-- **Self-Healing**: Liveness/Readiness probes on `/health`
-- **HPA**: CPU 70% threshold, 2-10 replicas
-- **Persistence**: PVC survives pod restarts
+- employee-api deployment - this is the API, has health checks and rolling update
+- postgres deployment - database pod with PVC attached
+- employee-api-service - LoadBalancer type so external access works
+- postgres-service - ClusterIP so only internal access
+- api-config and postgres-config - ConfigMaps for settings
+- postgres-secret - has the database password
+- postgres-pvc - 5Gi storage for database
+- employee-api-hpa - autoscaling based on CPU
+- ingress - routes traffic to API
 
----
+### Main features
 
-## 4. Justification for Resources
+- Rolling updates so no downtime when deploying
+- Health checks at /health endpoint, pods restart if they fail
+- HPA kicks in at 70% CPU, keeps between 2 and 10 pods
+- Data stays safe in PVC even if postgres pod restarts
 
-| Resource | Value | Justification |
-|----------|-------|---------------|
-| CPU Request | 50m | Minimal baseline; .NET idles at ~20-30m |
-| CPU Limit | 500m | 10x burst for request spikes |
-| Memory Request | 256Mi | Covers .NET runtime overhead |
-| Memory Limit | 512Mi | 2x buffer prevents OOM |
-| Storage | 5Gi | Adequate for sample data |
-| API Replicas | 2-10 | Min 2 for HA, max 10 for cost control |
-| DB Replicas | 1 | Single pod sufficient for demo |
+## Why I chose these resource values
 
----
+| What | Value | Why |
+|------|-------|-----|
+| CPU Request | 50m | .NET doesnt use much when idle, around 20-30m so 50m is fine |
+| CPU Limit | 500m | Gives room to handle sudden load |
+| Memory Request | 256Mi | .NET needs some memory for runtime |
+| Memory Limit | 512Mi | Double the request, should be enough |
+| Storage | 5Gi | More than enough for this demo |
+| API pods | 2-10 | 2 minimum for availability, 10 max so we dont spend too much |
+| DB pods | 1 | Just one is okay for demo purpose |
 
-## 5. FinOps - Cost Optimization Opportunities
+## FinOps - How to save money
 
-### Implemented
-- Right-sized resource requests (CPU: 50m, Memory: 256Mi)
-- HPA with low minimum replicas (2)
-- Appropriate limits prevent resource hogging
+### What I already did
+- Kept resource requests low (50m CPU, 256Mi memory)
+- HPA starts with just 2 pods
+- Set limits so pods dont eat up all resources
 
-### Three Optimization Opportunities
+### More things we can do to save money
 
-**1. Use Spot/Preemptible Instances**
-- Deploy API tier on spot nodes
-- **Savings**: 60-90% compute costs
-- Risk mitigated by HPA and self-healing
+**1. Spot instances**
+Run API pods on spot/preemptible nodes. These are way cheaper (like 60-90% off). If they get killed its okay because we have multiple pods and HPA.
 
-**2. Enable Cluster Autoscaler**
-- Auto-scale nodes based on demand
-- Add PodDisruptionBudget for availability
-- **Savings**: 20-40% during low-traffic periods
+**2. Cluster autoscaler**
+Let the cluster add/remove nodes based on how many pods need to run. Saves money at night or weekends when nobody is using the app. Should also add PodDisruptionBudget so atleast some pods are always there.
 
-**3. Optimize Container Images**
-- Use Alpine-based or distroless images
-- Reduces image size from ~220MB to ~50MB
-- **Savings**: Faster startup, lower storage/transfer costs
+**3. Smaller docker images**
+Right now image is around 220MB. Can use alpine based images and get it down to like 50MB. Smaller image means faster deployments and less storage cost.
 
 ---
 
-*Author: Saurabh Jain | NAGP 2026*
+Saurabh Jain - NAGP 2026
