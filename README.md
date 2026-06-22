@@ -8,13 +8,13 @@ This is my kubernetes assignment where I made a .NET 9 API with PostgreSQL datab
 
 ## Links
 
-| What | Link |
-|------|------|
-| Github Repo | https://github.com/saurabhjain374/nagp-k8s-assignment |
-| Docker Image | https://hub.docker.com/r/saurabhjain374/employee-api |
-| API via Ingress | http://8.231.113.109/api/employees |
-| API via LoadBalancer | http://34.180.14.51/api/employees |
-| Swagger | http://34.180.14.51/swagger |
+| What                 | Link                                                  |
+| -------------------- | ----------------------------------------------------- |
+| Github Repo          | https://github.com/saurabhjain374/nagp-k8s-assignment |
+| Docker Image         | https://hub.docker.com/r/saurabhjain374/employee-api  |
+| API via Ingress      | http://8.231.113.109/api/employees                    |
+| API via LoadBalancer | http://34.180.14.51/api/employees                     |
+| Swagger              | http://34.180.14.51/swagger                           |
 
 ---
 
@@ -51,14 +51,14 @@ nagp-k8s-assignment/
 
 ## API Endpoints
 
-| Method | URL | What it does |
-|--------|-----|--------------|
-| GET | `/api/employees` | gets all employees |
-| GET | `/api/employees/{id}` | gets one employee |
-| POST | `/api/employees` | creates new employee |
-| GET | `/api/employees/info` | shows app info like hostname |
-| GET | `/health` | health check |
-| GET | `/swagger` | swagger ui |
+| Method | URL                     | What it does                 |
+| ------ | ----------------------- | ---------------------------- |
+| GET    | `/api/employees`      | gets all employees           |
+| GET    | `/api/employees/{id}` | gets one employee            |
+| POST   | `/api/employees`      | creates new employee         |
+| GET    | `/api/employees/info` | shows app info like hostname |
+| GET    | `/health`             | health check                 |
+| GET    | `/swagger`            | swagger ui                   |
 
 ---
 
@@ -106,6 +106,7 @@ Basically users hit the ingress or loadbalancer, that goes to API pods (which ca
 ## How to deploy
 
 ### You need
+
 - A kubernetes cluster (I used GKE but any should work)
 - kubectl setup
 - NGINX ingress controller
@@ -138,26 +139,26 @@ kubectl get all -n nagp-assignment
 
 ## K8s features I used
 
-| Feature | How I did it |
-|---------|--------------|
-| Rolling Updates | set strategy type to RollingUpdate in deployment |
-| Self Healing | added liveness and readiness probes hitting /health |
-| Autoscaling | HPA with 70% cpu target, min 2 max 10 pods |
-| Persistent Data | PVC for postgres, 5Gi storage |
-| Config | ConfigMaps for settings |
-| Secrets | K8s secrets for db password (base64) |
-| Internal access | ClusterIP for postgres so only api can reach it |
-| External access | LoadBalancer + ingress |
-| Resource limits | set cpu and memory requests/limits |
+| Feature         | How I did it                                        |
+| --------------- | --------------------------------------------------- |
+| Rolling Updates | set strategy type to RollingUpdate in deployment    |
+| Self Healing    | added liveness and readiness probes hitting /health |
+| Autoscaling     | HPA with 70% cpu target, min 4 max 10 pods          |
+| Persistent Data | PVC for postgres, 5Gi storage                       |
+| Config          | ConfigMaps for settings                             |
+| Secrets         | K8s secrets for db password (base64)                |
+| Internal access | ClusterIP for postgres so only api can reach it     |
+| External access | LoadBalancer + ingress                              |
+| Resource limits | set cpu and memory requests/limits                  |
 
 ---
 
 ## Resource values
 
 | Resource | Request | Limit |
-|----------|---------|-------|
-| CPU | 50m | 500m |
-| Memory | 256Mi | 512Mi |
+| -------- | ------- | ----- |
+| CPU      | 50m     | 500m  |
+| Memory   | 256Mi   | 512Mi |
 
 Check [DOCUMENTATION.md](docs/DOCUMENTATION.md) for more details on why I chose these values and cost saving ideas.
 
@@ -166,6 +167,7 @@ Check [DOCUMENTATION.md](docs/DOCUMENTATION.md) for more details on why I chose 
 ## Video Recording
 
 In the video I showed:
+
 1. All pods running properly
 2. API working and fetching data from db
 3. Deleted api pod and it came back on its own (self healing)
@@ -186,6 +188,5 @@ In the video I showed:
 
 ---
 
-Saurabh Jain  
+Saurabh Jain
 NAGP 2026
-

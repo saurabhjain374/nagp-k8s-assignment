@@ -3,6 +3,7 @@
 ## What this assignment is about
 
 Basically we need to make a kubernetes app that has two parts:
+
 - An API that people can access from outside. It should scale up/down on its own and restart if something goes wrong. Need 4 pods, rolling updates and HPA stuff
 - A database (PostgreSQL) that only the API can talk to. This one needs storage that stays even if pod dies
 - Also need to use ConfigMaps and Secrets for config and passwords
@@ -50,21 +51,22 @@ Basically traffic comes from internet, goes to ingress, then to API pods (these 
 
 ## Why I chose these resource values
 
-| What | Value | Why |
-|------|-------|-----|
-| CPU Request | 50m | .NET doesnt use much when idle, around 20-30m so 50m is fine |
-| CPU Limit | 500m | Gives room to handle sudden load |
-| Memory Request | 256Mi | .NET needs some memory for runtime |
-| Memory Limit | 512Mi | Double the request, should be enough |
-| Storage | 5Gi | More than enough for this demo |
-| API pods | 2-10 | 2 minimum for availability, 10 max so we dont spend too much |
-| DB pods | 1 | Just one is okay for demo purpose |
+| What           | Value | Why                                                          |
+| -------------- | ----- | ------------------------------------------------------------ |
+| CPU Request    | 50m   | .NET doesnt use much when idle, around 20-30m so 50m is fine |
+| CPU Limit      | 500m  | Gives room to handle sudden load                             |
+| Memory Request | 256Mi | .NET needs some memory for runtime                           |
+| Memory Limit   | 512Mi | Double the request, should be enough                         |
+| Storage        | 5Gi   | More than enough for this demo                               |
+| API pods       | 2-10  | 2 minimum for availability, 10 max so we dont spend too much |
+| DB pods        | 1     | Just one is okay for demo purpose                            |
 
 ## FinOps - How to save money
 
 ### What I already did
+
 - Kept resource requests low (50m CPU, 256Mi memory)
-- HPA starts with just 2 pods
+- HPA starts with just 4 pods
 - Set limits so pods dont eat up all resources
 
 ### More things we can do to save money
